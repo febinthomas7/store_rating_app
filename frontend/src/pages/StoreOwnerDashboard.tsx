@@ -1,24 +1,26 @@
 import { useEffect, useState } from "react";
-import { api } from "../api/axios";
 import type { StoreOwnerDashboardData } from "../types";
+import { userStoreDashboard } from "../api/user";
 
 export default function StoreOwnerDashboard() {
   const [data, setData] = useState<StoreOwnerDashboardData | null>(null);
 
   useEffect(() => {
-    api
-      .get<StoreOwnerDashboardData>("/store-owner/dashboard")
-      .then(({ data }) => setData(data));
+    userStoreDashboard().then((data) => setData(data));
   }, []);
 
-  if (!data) return <p>Loading...</p>;
-
   return (
-    <div>
-      <h2>{data.store} - Dashboard</h2>
-      <p>Average Rating: {Number(data.averageRating).toFixed(1)}</p>
-      <h3>Ratings Submitted</h3>
-      <table border={1} cellPadding={8}>
+    <div className=" h-dvh w-full flex flex-col items-center justify-center">
+      <h2 className="text-2xl font-bold mb-4">{data?.store} - Dashboard</h2>
+      <p className="text-lg">
+        Average Rating: {Number(data?.averageRating).toFixed(1)}
+      </p>
+      <h3 className="text-xl font-semibold mb-2">Ratings Submitted</h3>
+      <table
+        border={1}
+        cellPadding={8}
+        className="border-collapse border border-gray-300 w-3/4"
+      >
         <thead>
           <tr>
             <th>User</th>
@@ -28,7 +30,7 @@ export default function StoreOwnerDashboard() {
           </tr>
         </thead>
         <tbody>
-          {data.ratings.map((r, i) => (
+          {data?.ratings.map((r, i) => (
             <tr key={i}>
               <td>{r.name}</td>
               <td>{r.email}</td>

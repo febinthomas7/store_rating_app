@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import { authcheck, logout as logoutuser } from "../api/auth";
 
 interface User {
   id: number;
@@ -12,6 +12,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   logout: () => void;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -21,21 +22,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("/api/auth/me", { withCredentials: true })
-      .then((res) => setUser(res.data.user))
+    authcheck()
+      .then((res) => setUser(res.user))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);
 
   const logout = async () => {
-    await axios.post("/api/auth/logout", {}, { withCredentials: true });
+    await logoutuser();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, loading, logout, setUser }}>
+      {children}
     </AuthContext.Provider>
   );
 };

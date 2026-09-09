@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { api } from "../api/axios";
 import type { Store } from "../types";
+import { getStoreList, submitRatingToStore } from "../api/user";
 
 export default function StoreList() {
   const [stores, setStores] = useState<Store[]>([]);
@@ -9,9 +9,7 @@ export default function StoreList() {
   const [order, setOrder] = useState<"asc" | "desc">("asc");
 
   const fetchStores = async () => {
-    const { data } = await api.get<Store[]>("/user/stores", {
-      params: { ...filters, sortBy, order },
-    });
+    const data = await getStoreList({ ...filters, sortBy, order });
     setStores(data);
   };
 
@@ -25,7 +23,7 @@ export default function StoreList() {
   };
 
   const submitRating = async (storeId: number, rating: number) => {
-    await api.post(`/user/stores/${storeId}/rating`, { rating });
+    await submitRatingToStore(storeId, rating);
     fetchStores();
   };
 
@@ -38,23 +36,34 @@ export default function StoreList() {
   };
 
   return (
-    <div>
-      <h2>Stores</h2>
+    <div className="h-dvh w-full flex flex-col items-center justify-center p-4">
+      <h2 className="text-2xl font-bold mb-4">Stores</h2>
       <form onSubmit={handleFilterSubmit}>
         <input
           placeholder="Search by name"
           value={filters.name}
           onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+          className="border border-gray-300 rounded px-2 py-1"
         />
         <input
           placeholder="Search by address"
           value={filters.address}
           onChange={(e) => setFilters({ ...filters, address: e.target.value })}
+          className="border border-gray-300 rounded px-2 py-1"
         />
-        <button type="submit">Search</button>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white py-2 px-4 rounded"
+        >
+          Search
+        </button>
       </form>
 
-      <table border={1} cellPadding={8}>
+      <table
+        border={1}
+        cellPadding={8}
+        className="border-collapse border border-gray-300 w-3/4 mt-4"
+      >
         <thead>
           <tr>
             <th onClick={() => toggleSort("name")}>Name</th>
@@ -65,7 +74,7 @@ export default function StoreList() {
           </tr>
         </thead>
         <tbody>
-          {stores.map((s) => (
+          {stores?.map((s) => (
             <tr key={s.id}>
               <td>{s.name}</td>
               <td>{s.address}</td>

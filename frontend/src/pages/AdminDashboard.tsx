@@ -12,19 +12,22 @@ export default function AdminDashboard() {
       .then(({ data }) => setStats(data));
   }, []);
 
-  if (!stats) return <p>Loading...</p>;
-
   return (
-    <div>
-      <h2>Admin Dashboard</h2>
-      <ul>
-        <li>Total Users: {stats.totalUsers}</li>
-        <li>Total Stores: {stats.totalStores}</li>
-        <li>Total Ratings: {stats.totalRatings}</li>
+    <div className=" h-dvh w-full flex flex-col items-center justify-center">
+      <h2 className="text-2xl font-bold mb-4">Admin Dashboard</h2>
+      <ul className="space-y-2">
+        <li className="text-lg">Total Users: {stats?.totalUsers}</li>
+        <li className="text-lg">Total Stores: {stats?.totalStores}</li>
+        <li className="text-lg">Total Ratings: {stats?.totalRatings}</li>
       </ul>
-      <nav>
-        <Link to="/admin/users">Manage Users</Link> |{" "}
-        <Link to="/admin/stores">Manage Stores</Link>
+      <nav className="mt-4">
+        <Link to="/admin/users" className="text-blue-500 hover:underline">
+          Manage Users
+        </Link>{" "}
+        |{" "}
+        <Link to="/admin/stores" className="text-blue-500 hover:underline">
+          Manage Stores
+        </Link>
       </nav>
     </div>
   );

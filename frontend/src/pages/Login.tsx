@@ -1,27 +1,21 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { login } from "../api/auth";
-import type { Role } from "../types";
 import axios from "axios";
-
-const roleToPath: Record<Role, string> = {
-  admin: "/admin",
-  user: "/stores",
-  store_owner: "/store-owner",
-};
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  // const { login } = useAuth();
-  const navigate = useNavigate();
+  const [email, setEmail] = useState("tfebin39@gmail.com");
+  const [password, setPassword] = useState("Tfebin20@2003");
+
+  const { setUser } = useAuth();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const user = await login({ email, password });
-      navigate(roleToPath[user.role as Role] || "/login");
+      const res = await login({ email, password });
+      setUser(res.user);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         console.error("Login failed:", err.response?.data || err.message);
