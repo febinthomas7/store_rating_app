@@ -5,10 +5,13 @@ import { useAuth } from "./context/AuthContext";
 import StoreList from "./pages/StoreList";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
+
 import AdminStores from "./pages/AdminStores";
 import StoreOwnerDashboard from "./pages/StoreOwnerDashboard";
 import FallBack from "./components/FallBack";
 import { getRoleDefaultPath } from "./utils";
+import Layout from "./components/Layout";
+import UserDetails from "./pages/UserDetails";
 
 const UpdatePassword = lazy(() => import("./pages/UpdatePassword"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
@@ -28,7 +31,7 @@ const PrivateLayout = ({ allowedRoles }: { allowedRoles?: string[] }) => {
     return <Navigate to={getRoleDefaultPath(user.role)} replace />;
   }
 
-  return <Outlet />;
+  return <Layout />;
 };
 
 const PublicLayout = () => {
@@ -87,6 +90,7 @@ const router = createBrowserRouter([
       { path: "/admin", element: <AdminDashboard /> },
       { path: "/admin/users", element: <AdminUsers /> },
       { path: "/admin/stores", element: <AdminStores /> },
+      { path: "/admin/users/:id", element: <UserDetails /> },
     ],
   },
 

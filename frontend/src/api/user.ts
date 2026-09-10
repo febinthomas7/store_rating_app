@@ -19,3 +19,8 @@ export const submitRatingToStore = async (storeId: number, rating: any) => {
   const res = await api.post(`/users/stores/${storeId}/ratings`, { rating });
   return res.data;
 };
+
+export const userDetails = async (id) => {
+  const res = await api.get(`/admin/user/${id}`);
+  return res.data;
+};

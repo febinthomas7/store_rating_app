@@ -48,8 +48,6 @@ const submitOrUpdateRating = async (req, res) => {
   const { rating } = req.body;
   const userId = req.user.id;
 
-  console.log("Received rating submission:", { userId, storeId, rating });
-
   const error = validateRating(rating);
   if (error) {
     res.status(400).json({ message: error });

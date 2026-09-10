@@ -16,7 +16,7 @@ export const logout = async () => {
 };
 
 export const updatePassword = async (userData: any) => {
-  const res = await api.post("/auth/UpdatePassword", userData);
+  const res = await api.put("/auth/password", userData);
   return res.data;
 };
 

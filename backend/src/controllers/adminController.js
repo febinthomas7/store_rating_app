@@ -34,7 +34,6 @@ const getDashboard = async (_req, res) => {
 
 const createUser = async (req, res) => {
   const { name, email, password, address, role } = req.body;
-  console.log("Received data for new user:", { name, email, address, role });
 
   const errors = [
     validateName(name),
@@ -168,9 +167,10 @@ const listStores = async (req, res) => {
 
   try {
     const [rows] = await pool.query(
-      `SELECT s.id, s.name, s.email, s.address,
+      `SELECT s.id, s.name, s.email, s.address,u.name AS ownerName,
               COALESCE(AVG(r.rating), 0) AS rating
        FROM stores s
+       LeFT JOIN users u ON s.owner_id = u.id
        LEFT JOIN ratings r ON r.store_id = s.id
        ${whereClause}
        GROUP BY s.id
@@ -197,7 +197,8 @@ const getUserDetails = async (req, res) => {
     }
 
     const user = rows[0];
-    if (user.role === "store_owner") {
+    console.log(user);
+    if (user.role === "STORE_OWNER") {
       const [[store]] = await pool.query(
         `SELECT s.id, COALESCE(AVG(r.rating), 0) AS rating
          FROM stores s LEFT JOIN ratings r ON r.store_id = s.id

@@ -4,6 +4,11 @@ export const adminStores = async (userData: any) => {
   const res = await api.get("/admin/list-stores", { params: userData });
   return res.data;
 };
+export const adminDashboard = async () => {
+  const res = await api.get("/admin/dashboard");
+
+  return res.data;
+};
 
 export const listUsers = async (userData: any) => {
   const res = await api.get("/admin/list-users", { params: userData });

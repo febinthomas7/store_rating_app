@@ -4,10 +4,13 @@ import { Link } from "react-router-dom";
 import { login } from "../api/auth";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
+import { Input } from "../components/Input";
 
 export default function Login() {
   const [email, setEmail] = useState("tfebin39@gmail.com");
   const [password, setPassword] = useState("Tfebin20@2003");
+  const toast = useToast();
 
   const { setUser } = useAuth();
 
@@ -16,11 +19,12 @@ export default function Login() {
     try {
       const res = await login({ email, password });
       setUser(res.user);
+      toast.success("Login successful!");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.error("Login failed:", err.response?.data || err.message);
+        toast.error("Login failed!");
       } else {
-        console.error("Login failed:", err);
+        toast.error("Login failed!");
       }
     }
   };
@@ -28,23 +32,22 @@ export default function Login() {
   return (
     <div className="h-dvh w-full flex flex-col items-center justify-center">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-75">
-        <h1>Email</h1>
 
-        <input
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-75">
+        <Input
+          label="Email"
           type="email"
           placeholder="Email"
           value={email}
-          className="border border-gray-300 rounded px-2 py-1"
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <h1>Password</h1>
-        <input
+
+        <Input
+          label="Password"
           type="password"
           placeholder="Password"
           value={password}
-          className="border border-gray-300 rounded px-2 py-1"
           onChange={(e) => setPassword(e.target.value)}
           required
         />

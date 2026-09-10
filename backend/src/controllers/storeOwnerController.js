@@ -4,10 +4,11 @@ const getStoreDashboard = async (req, res) => {
   const ownerId = req.user.id;
 
   try {
-    const [store] = await pool.query(
+    const [[store]] = await pool.query(
       "SELECT id, name FROM stores WHERE owner_id = ?",
       [ownerId],
     );
+
     if (!store) {
       res
         .status(404)
