@@ -66,7 +66,7 @@ cd store_rating_app
 
 
 # Navigate to backend directory
-cd server
+cd backend
 
 # Install dependencies
 npm install
