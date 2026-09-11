@@ -1,8 +1,9 @@
 require("dotenv").config();
 const express = require("express");
+
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
+const rateLimit = require("express-rate-limit");
 // Database Connection
 const db = require("./config/db.js");
 
@@ -15,7 +16,33 @@ const users = require("./routes/user.js");
 // const ratingRoutes = require("./src/routes/ratingRoutes");
 
 const app = express();
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 5000;
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
+  legacyHeaders: false, // Disable `X-RateLimit-*` headers
+  message: {
+    success: false,
+    message:
+      "Too many requests from this IP, please try again after 15 minutes.",
+  },
+});
+
+// Stricter Auth Limiter: Protects login/register routes against brute-force (10 requests per 15 mins)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 attempts
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message:
+      "Too many login/auth attempts from this IP, please try again after 15 minutes.",
+  },
+});
 
 // Middleware
 app.use(
@@ -35,10 +62,10 @@ app.get("/health", (req, res) => {
 });
 
 // API Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/admin", userRoutes);
-app.use("/api/store", storeRoutes);
-app.use("/api/users", users);
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/admin", globalLimiter, userRoutes);
+app.use("/api/store", globalLimiter, storeRoutes);
+app.use("/api/users", globalLimiter, users);
 // app.use("/api/ratings", ratingRoutes);
 
 // Global 404 Route Handler

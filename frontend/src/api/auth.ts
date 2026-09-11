@@ -11,7 +11,7 @@ export const signup = async (userData: any) => {
 };
 
 export const logout = async () => {
-  const res = await api.post("/auth/logout", {}, { withCredentials: true });
+  const res = await api.post("/auth/logout");
   return res.data;
 };
 
@@ -21,6 +21,6 @@ export const updatePassword = async (userData: any) => {
 };
 
 export const authcheck = async () => {
-  const res = await api.get("/auth/me", { withCredentials: true });
+  const res = await api.get("/auth/me");
   return res.data;
 };

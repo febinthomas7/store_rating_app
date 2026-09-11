@@ -1,17 +1,21 @@
 import { Link, useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
 
   const handleLogout = async () => {
     try {
       await logout();
+      toast.success("Logout successfull");
+
       navigate("/login", { replace: true });
     } catch (err) {
-      console.error("Logout failed:", err);
+      toast.error("Logout failed");
     }
   };
   const navLinks = {

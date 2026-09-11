@@ -3,22 +3,24 @@ import axios from "axios";
 import { updatePassword } from "../api/auth";
 import { useToast } from "../context/ToastContext";
 import { Input } from "../components/Input";
+import { Button } from "../components/Button";
 
 export default function UpdatePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const toast = useToast();
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setMessage("");
+    setLoading(true);
+
     try {
       const { data } = await updatePassword({
         currentPassword,
         newPassword,
       });
       toast.success("Password updated successfully!");
-      setMessage(data.message);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         toast.error(
@@ -27,6 +29,8 @@ export default function UpdatePassword() {
       } else {
         toast.error("Failed to update password.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,19 +63,16 @@ export default function UpdatePassword() {
           character.
         </p>
 
-        <button
+        <Button
+          loadingText="loading.."
+          isLoading={loading}
+          disabled={loading}
           type="submit"
           className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-lg transition"
         >
           Update Password
-        </button>
+        </Button>
       </form>
-
-      {message && (
-        <p className="mt-4 p-2 text-center text-xs font-medium rounded-md bg-gray-100 text-gray-700">
-          {message}
-        </p>
-      )}
     </div>
   );
 }

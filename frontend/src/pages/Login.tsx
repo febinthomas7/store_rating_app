@@ -2,30 +2,36 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { login } from "../api/auth";
-import axios from "axios";
+
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Input } from "../components/Input";
+import { Button } from "../components/Button";
 
 export default function Login() {
   const [email, setEmail] = useState("tfebin39@gmail.com");
   const [password, setPassword] = useState("Tfebin20@2003");
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const { setUser } = useAuth();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await login({ email, password });
       setUser(res.user);
       toast.success("Login successful!");
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        toast.error("Login failed!");
+      console.log(err);
+      if (err.response?.status === 429) {
+        toast.error("Too many request, try after 15 minutes");
       } else {
-        toast.error("Login failed!");
+        toast.error("Login failed");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,12 +57,16 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button
+
+        <Button
           type="submit"
+          isLoading={loading}
+          loadingText="loading.."
           className="bg-blue-500 text-white py-2 px-4 rounded"
+          disabled={loading}
         >
           Login
-        </button>
+        </Button>
       </form>
       <p className="mt-4">
         New user?{" "}

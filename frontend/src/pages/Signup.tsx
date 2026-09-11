@@ -5,6 +5,7 @@ import axios from "axios";
 import { signup } from "../api/auth";
 import { useToast } from "../context/ToastContext";
 import { Input } from "../components/Input";
+import { Button } from "../components/Button";
 interface SignupForm {
   name: string;
   email: string;
@@ -19,6 +20,7 @@ export default function Signup() {
     address: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
   const handleChange = (
@@ -27,6 +29,7 @@ export default function Signup() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await signup(form);
       toast.success("Signup successful! Please login.");
@@ -43,6 +46,8 @@ export default function Signup() {
           toast.error("Signup failed: " + (data?.message || err.message));
         }
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,12 +93,15 @@ export default function Signup() {
           onChange={handleChange}
           required
         />
-        <button
+        <Button
+          isLoading={loading}
+          loadingText="loading.."
+          disabled={loading}
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
           Sign Up
-        </button>
+        </Button>
 
         <p className="mt-4">
           Already have an account?{" "}
